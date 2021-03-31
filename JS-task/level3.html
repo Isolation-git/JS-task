@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>level3</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <style>
+        * {
+            list-style: none;
+        }
+
+        .box1 {
+            display: flex;
+            width: 900px;
+            height: 70px;
+            margin: 10px auto;
+            justify-content: space-around;
+        }
+
+        input {
+            margin-top: 18px;
+            width: 200px;
+            height: 30px;
+        }
+
+        span {
+            cursor: pointer;
+            margin-top: 18px;
+            width: 80px;
+            height: 30px;
+            background-color: #faebd7;
+            border-radius: 5px;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .box2 {
+            position: relative;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 10px;
+            width: 870px;
+            height: 600px;
+            background-color: #7fffd4;
+        }
+
+        li {
+            position: absolute;
+            background-color: pink;
+            text-align: center;
+            bottom: 0;
+        }
+
+        /* .box3 {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+        } */
+    </style>
+</head>
+
+<body>
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <!-- <div class="box3"></div> -->
+    <div class="box1">
+        <input type="number">
+        <span id="left_in">左侧入</span>
+        <span id="right_in">右侧入</span>
+        <span id="left_out">左侧出</span>
+        <span id="right_out">右侧出</span>
+        <span id="sort">重新排序</span>
+        <span id="remove">清空</span>
+        <span id="generate">随机生成</span>
+    </div>
+    <div class="box2">
+
+    </div>
+    <script>
+        var box3 = document.querySelector('.box3');
+        var generate = document.querySelector('#generate');
+        var input = document.querySelector('input');
+        var box2 = document.querySelector('.box2');
+        var remove = document.querySelector('#remove');
+        var left_in = document.querySelector('#left_in');
+        var left_out = document.querySelector('#left_out');
+        var right_in = document.querySelector('#right_in');
+        var right_out = document.querySelector('#right_out');
+        var sort = document.querySelector('#sort');
+
+        function sortnumber(a, b) {
+            return a - b;
+        }
+
+        function exchangeB(a, b) {
+            let li1 = document.createElement('li');
+            let li2 = document.createElement('li');
+            li1.style.width = a.offsetWidth + 'px';
+            li2.style.width = b.offsetWidth + 'px';
+            li1.style.height = b.offsetHeight + 'px';
+            li2.style.height = a.offsetHeight + 'px';
+            li1.style.left = b.offsetLeft + 'px';
+            li2.style.left = a.offsetLeft + 'px';
+            li1.index = a.index;
+            li2.index = b.index;
+            li1.ready = a.ready;
+            li2.ready = b.ready;
+            li1.innerHTML = b.innerHTML;
+            li2.innerHTML = a.innerHTML;
+            box2.removeChild(box2.children[li1.index]);
+            box2.removeChild(box2.children[li1.index]);
+            box2.insertBefore(li2, box2.children[li1.index]);
+            box2.insertBefore(li1, box2.children[li1.index]);
+        }
+
+        function animate(obj1, obj2, target, callback) {
+            clearInterval(obj1.timer);
+            obj1.timer = setInterval(function () {
+                let step = (target - obj1.offsetLeft) / 10;
+                step = step > 0 ? Math.ceil(step) : Math.floor(step);
+                if (obj1.offsetLeft == target) {
+                    clearInterval(obj1.timer);
+                    if (callback) {
+                        callback(obj2, obj1);
+                    }
+                }
+                obj1.style.left = obj1.offsetLeft + step + 'px';
+            }, 1)
+        }
+
+        function exchangeA(a, b, callback) {
+            animate(a, b, b.offsetLeft);
+            animate(b, a, a.offsetLeft, callback);
+        }
+
+        function addIndex(args) {
+            for (let i = 0; i < args.length; i++) {
+                box2.children[i].index = i;
+            }
+        }
+
+        function isRight() {
+            let m = input.value;
+            if (m < 10 || m > 60) {
+                alert('请输入10~60之间的整数！');
+                return false;
+            } else {
+                return true;
+            }
+        }
+        left_in.onclick = function () {
+            if (isRight()) {
+                let li = document.createElement('li');
+                li.style.height = input.value * 10 + 'px';
+                li.innerHTML = input.value;
+                box2.insertBefore(li, box2.children[0]);
+                let width = parseInt((box2.offsetWidth - 100) / box2.children.length);
+                for (let i = 0; i < box2.children.length; i++) {
+                    box2.children[i].style.width = width + 'px';
+                    let margin = parseInt((box2.offsetWidth - width * box2.children.length - 30) / box2.children
+                        .length);
+                    box2.children[i].style.left = (20 + width * i + margin * i) + 'px';
+                }
+                addIndex(box2.children);
+                let x = li.cloneNode(true);
+            }
+        }
+        right_in.onclick = function () {
+            if (isRight()) {
+                let li = document.createElement('li');
+                li.style.height = input.value * 10 + 'px';
+                li.innerHTML = input.value;
+                box2.appendChild(li);
+                let width = parseInt((box2.offsetWidth - 100) / box2.children.length);
+                for (let i = 0; i < box2.children.length; i++) {
+                    box2.children[i].style.width = width + 'px';
+                    let margin = parseInt((box2.offsetWidth - width * box2.children.length - 30) / box2.children
+                        .length);
+                    box2.children[i].style.left = (20 + width * i + margin * i) + 'px';
+                }
+                addIndex(box2.children);
+            }
+        }
+        left_out.onclick = function () {
+            box2.removeChild(box2.children[0]);
+            let width = parseInt((box2.offsetWidth - 100) / box2.children.length);
+            for (let i = 0; i < box2.children.length; i++) {
+                box2.children[i].style.width = width + 'px';
+                let margin = parseInt((box2.offsetWidth - width * box2.children.length - 30) / box2.children
+                    .length);
+                box2.children[i].style.left = (20 + width * i + margin * i) + 'px';
+            }
+            addIndex(box2.children);
+        }
+        right_out.onclick = function () {
+            box2.removeChild(box2.children[box2.children.length - 1]);
+            let width = parseInt((box2.offsetWidth - 100) / box2.children.length);
+            for (let i = 0; i < box2.children.length; i++) {
+                box2.children[i].style.width = width + 'px';
+                let margin = parseInt((box2.offsetWidth - width * box2.children.length - 30) / box2.children
+                    .length);
+                box2.children[i].style.left = (20 + width * i + margin * i) + 'px';
+            }
+            addIndex(box2.children);
+        }
+        remove.onclick = function () {
+            let t = box2.children;
+            let x = t.length;
+            for (let i = 0; i < x; i++) {
+                box2.removeChild(t[0]);
+            }
+        }
+        sort.onclick = function () {
+            let heights = new Array;
+            let offsetLefts = new Array;
+            for (let i = 0; i < box2.children.length; i++) {
+                box2.children[i].ready = false;
+                let t1 = box2.children[i].innerText;
+                let t2 = box2.children[i].offsetLeft;
+                heights.push(t1);
+                offsetLefts.push(t2);
+                heights.sort(sortnumber);
+            }
+            box2.timer = setInterval(function () {
+                for (let i = box2.children.length - 1; i >= 0; i--) {
+                    if (box2.children[i].ready == true) {
+                        continue;
+                    } else {
+                        for (let j = box2.children.length - 1; j >= 0; j--) {
+                            if (box2.children[j].innerText == heights[i]) {
+                                if (box2.children[j].offsetLeft == offsetLefts[i]) {
+                                    box2.children[j].ready = true;
+                                    if (box2.children[1].ready == true) {
+                                        clearInterval(box2.timer);
+                                    }
+                                } else if (!box2.children[j].ready && box2.children[j].innerText > box2
+                                    .children[j + 1].innerText) {
+                                    exchangeA(box2.children[j], box2.children[j + 1], exchangeB);
+                                    return 0;
+                                } else {
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }, 200)
+
+        }
+        generate.onclick = function () {
+            remove.onclick();
+            let width = parseInt(Math.random() * 11 + 40);
+            let n = parseInt((box2.offsetWidth - 100) / width);
+            for (let i = 0; i < n; i++) {
+                let li = document.createElement('li');
+                li.style.width = width + 'px';
+                let height = parseInt(Math.random() * 51 + 10) * 10;
+                let margin = parseInt((box2.offsetWidth - width * n - 30) / n);
+                li.style.height = height + 'px';
+                li.innerHTML = height / 10;
+                li.style.left = (20 + width * i + margin * i) + 'px';
+                box2.appendChild(li);
+            }
+            addIndex(box2.children);
+        }
+    </script>
+</body>
+
+</html>

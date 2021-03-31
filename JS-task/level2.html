@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>level2-留言板</title>
+    <style>
+        li {
+            list-style: none;
+            width: 200px;
+            height: 50px;
+            padding: 5px;
+            margin: 5px 0;
+            border: 2px solid rgb(212, 209, 209);
+            border-radius: 5px;
+        }
+
+        a {
+            position: absolute;
+            top: 5px;
+            left: 140px;
+            /* float: right; */
+            cursor: pointer;
+        }
+
+        a:hover {
+            color: skyblue;
+        }
+    </style>
+</head>
+
+<body>
+    <textarea name="" id="" cols="80" rows="10"></textarea>
+    <button class="post">点击发布</button>
+    <ul class="list">
+    </ul>
+    <script>
+        var btn = document.querySelector('.post');
+        var list = document.querySelector('.list');
+        var textarea = document.querySelector('textarea');
+        btn.onclick = function () {
+            if (textarea.value == '') {
+                alert('你还未输入内容!');
+                return false;
+            } else {
+                alert('评论成功！');
+                var li = document.createElement('li');
+                var a = document.createElement('a');
+                a.innerHTML = '删除留言';
+                li.style.position = 'relative';
+                li.innerHTML = textarea.value;
+                li.appendChild(a);
+                textarea.value = '';
+                list.appendChild(li);
+                a.onclick = function () {
+                    list.removeChild(this.parentNode);
+                    alert('删除成功！');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
